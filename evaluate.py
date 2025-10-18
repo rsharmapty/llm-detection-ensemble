@@ -41,7 +41,10 @@ def evaluate_roberta(test_df):
     return {"Model": "RoBERTa", "F1 Score": f1, "Precision": precision, "Recall": recall}
 
 def evaluate_all(X_test_tfidf, X_test_stats, test_df):
-    """Loads all models, evaluates them, and evaluates the ensemble."""
+    """
+    Loads all models, evaluates them, evaluates the ensemble, 
+    and saves detailed results to an Excel file.
+    """
     print("\n--- Starting Evaluation Phase ---")
     y_test = test_df['label']
     
@@ -87,6 +90,20 @@ def evaluate_all(X_test_tfidf, X_test_stats, test_df):
         "Recall": ensemble_recall
     }
     
+    # Request 2: Save detailed evaluation results to an Excel file
+    print("Saving detailed evaluation results to evaluation_results.xlsx...")
+    results_export_df = pd.DataFrame({
+        'text': test_df['text'],
+        'ground_truth': y_test,
+        'logistic_regression_pred': lr_preds,
+        'xgboost_pred': xgb_preds,
+        'roberta_pred': roberta_preds,
+        'ensemble_pred': ensemble_preds
+    })
+    results_export_df.to_excel('evaluation_results.xlsx', index=False)
+    print("Evaluation results saved successfully.")
+
     # Compile and return results
     results_df = pd.DataFrame([lr_metrics, xgb_metrics, roberta_metrics, ensemble_metrics])
     return results_df
+

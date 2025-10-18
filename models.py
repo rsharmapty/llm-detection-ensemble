@@ -51,7 +51,8 @@ def train_roberta(train_df):
     # Define Training Arguments
     training_args = TrainingArguments(
         output_dir=os.path.join(MODEL_DIR, 'roberta_results'),
-        num_train_epochs=1, # Use 1 epoch for faster training in this demo project
+        # Request 1: Increased epochs for more robust training
+        num_train_epochs=3,
         per_device_train_batch_size=8,
         warmup_steps=100,
         weight_decay=0.01,
@@ -75,3 +76,4 @@ def train_roberta(train_df):
     tokenizer.save_pretrained(os.path.join(MODEL_DIR, 'roberta_model'))
     print(f"RoBERTa model saved to {MODEL_DIR}/roberta_model")
     return trainer.model, tokenizer
+

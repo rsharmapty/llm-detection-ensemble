@@ -1,4 +1,6 @@
 import pandas as pd
+import os
+import joblib
 from data_loader import load_and_prepare_data
 from visualization import create_visualizations
 from feature_engineering import create_tfidf_features, create_statistical_features
@@ -12,9 +14,8 @@ def main():
     print("--- LLM Generated Text Detection Project ---")
     
     # --- 1. Data Loading and Preprocessing ---
-    # Using a smaller sample size for quicker execution in this demo project.
-    # Increase sample_size for a more robust evaluation.
-    train_df, test_df = load_and_prepare_data(sample_size=2500)
+    # Request 1: Increased dataset size for a more robust evaluation.
+    train_df, test_df = load_and_prepare_data(sample_size=10000)
     
     # --- 2. Data Visualization ---
     # Running visualization on the training data
@@ -22,8 +23,14 @@ def main():
     
     # --- 3. Feature Engineering ---
     # For Logistic Regression
-    X_train_tfidf, X_test_tfidf, _ = create_tfidf_features(train_df, test_df)
+    X_train_tfidf, X_test_tfidf, tfidf_vectorizer = create_tfidf_features(train_df, test_df)
     
+    # Save the TF-IDF vectorizer for later use in inference
+    if not os.path.exists('models'):
+        os.makedirs('models')
+    joblib.dump(tfidf_vectorizer, os.path.join('models', 'tfidf_vectorizer.pkl'))
+    print("TF-IDF vectorizer saved to models/")
+
     # For XGBoost
     X_train_stats, X_test_stats = create_statistical_features(train_df, test_df)
     
@@ -46,3 +53,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
